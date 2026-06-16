@@ -1,0 +1,48 @@
+import java.net.*;
+import java.io.*;
+import java.util.Scanner;
+
+public class CustomerClient {
+    public static void main(String[] args) throws Exception {
+        Socket socket = new Socket("192.168.X.X", 5000); // ← replace with YOUR IP
+        BufferedReader in = new BufferedReader(
+            new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=== VLS Customer Client ===");
+        System.out.print("Enter your email: ");
+        String email = scanner.nextLine();
+
+        while (true) {
+            System.out.println("\n1. Rent a Movie");
+            System.out.println("2. Return a Movie");
+            System.out.println("3. Exit");
+            System.out.print("Choice: ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    System.out.print("Movie name: ");
+                    String rentMovie = scanner.nextLine();
+                    out.println("RENT_MOVIE," + email + "," + rentMovie);
+                    System.out.println("Server says: " + in.readLine());
+                    break;
+
+                case "2":
+                    System.out.print("Movie to return: ");
+                    String returnMovie = scanner.nextLine();
+                    out.println("RETURN_MOVIE," + email + "," + returnMovie);
+                    System.out.println("Server says: " + in.readLine());
+                    break;
+
+                case "3":
+                    socket.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+}
